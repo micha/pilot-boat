@@ -1,7 +1,7 @@
 
 \section{Preliminary Design Parameters}
 
-\subsection{Lightship Displacement} \label{sec:dls}
+\subsection{Lightship Displacement} \label{sec:prelim:dls}
 
 Lightship condition, \Zdls, is the ``shipping weight", i.e. the
 weight of the boat without fuel, water, stores, people, etc. We obtain
@@ -27,11 +27,10 @@ Thus, we have:
 --@]
 
 \begin{align} \label{eq:dls}
-  \Zdls &= 30 {\Zloa}^{2.3} \\
-        &= \boxed{\unit[[@--$dls--@]]{kg}}
+  \Zdls &= 30 {\Zloa}^{2.3}
 \end{align}
 
-\subsection{Gray and Black Water Tank Capacities} \label{sec:tanks}
+\subsection{Gray and Black Water Tank Capacities} \label{sec:prelim:tanks}
 
 The tank capacities are determined by the endurance requirements and
 the fresh water capacity.
@@ -42,45 +41,15 @@ the fresh water capacity.
 \end{align}
 
 
-\subsection{Trials Displacement} \label{sec:dtr}
+\subsection{Trials Displacement} \label{sec:prelim:dtr}
 
 Sea trials will be conducted with minimal fuel, two passengers, and no
 water or stores other than required safety equipment. With these weights
 we obtain the trials displacement:
 
-  \begin{center}
-    \begin{tabular*}{0.5\textwidth}{@{\extracolsep{\fill}} l r }
-      Item & Weight \\
-      \hline
-[@--
-  $t    = $wb{requirements}{load}{trials};
-  $t2   = $wb{tanks};
-  $SGfo = $wb{const}{SGfo};
-  $fo   = $wb{requirements}{trialsfo};
-
-  unshift(@{$t->{items}}, [ "Fuel", 3.8*$SGfo*$fo ]);
-  
-  $i = "";
-  $j = 0;
-  foreach (@{$t->{items}}) {
-    $j += $_->[1];
-    $i .= $_->[0] . " \& \\unit[" . $_->[1] . "]{kg} \\\\\n";
-  }
-  $i .= "\\hline\n";
-  $i .= "Total \& \\unit[".$j."]{kg}\n";
-
-  $dtr = $dls + $j;
-
-  $i;
---@]
-  
-    \end{tabular*}
-  \end{center}
-
 
 \begin{align} \label{eq:dtr}
-  \Zdtr &= \Zdls + \Zwtr \\
-        &= \boxed{\unit[[@--$dtr--@]]{kg}}
+  \Zdtr &= \Zdls + \Zwtr
 \end{align}
 
 [@--
@@ -102,7 +71,7 @@ we obtain the trials displacement:
 
 where \Zwtr\ is the total weight of fuel, passengers, and safety equipment (kg).
 
-\subsection{Required Horsepower}
+\subsection{Required Horsepower} \label{sec:prelim:hp}
 
 The maximum speed, trials displacement condition is the dominating one
 for the initial power requirement estimate. The Barnaby-Levi approximation
@@ -136,66 +105,27 @@ for \Zshp.
 
 \begin{align} \label{eq:shp}
   \Zshp &= \frac{\Zdtr {\Zvs}^2}{{k}^2 \sqrt{\Zloa}}
-            \left(\frac{2.2}{2240 \sqrt{3.28}}\right) \\
-        &= \boxed{\unit[[@--$shp--@]]{hp}}
+            \left(\frac{2.2}{2240 \sqrt{3.28}}\right)
 \end{align}
 
 where \Zdtr\ is in \unit{kg} and \Zloa\ is in \unit{m}. Shaft horsepower
 is approximately 97\% of brake horsepower. Therefore we have:
 
 \begin{align} \label{eq:bhp}
-  \Zbhp &= \frac{\Zshp}{.97} \\
-        &= \boxed{\unit[[@--$bhp--@]]{hp}}
+  \Zbhp &= \frac{\Zshp}{.97}
 \end{align}
 
-\subsection{Fuel Capacity}
+\subsection{Fuel Capacity} \label{sec:prelim:qfo}
 
 Fuel capacity is determined by the maximum range requirement at a given
 load condition, \Zdc. First, the displacement of the vessel, minus fuel,
 is calculated by adding known weights to the lightship displacement
 obtained from \eqref{eq:dls}. Then we have:
 
-  \begin{center}
-    \begin{tabular*}{0.5\textwidth}{@{\extracolsep{\fill}} l r }
-      Item & Weight \\
-      \hline
-[@--
-  $t = $wb{requirements}{load}{range};
-  $t2= $wb{tanks};
-  $SGbw = $wb{const}{SGbw};
-  $SGgw = $wb{const}{SGgw};
-
-  unshift(@{$t->{items}}, [ "Fresh water", 3.8*$t->{fw}*$t2->{fw} ]);
-  unshift(@{$t->{items}}, [ "Gray water",  3.8*$SGgw*$t->{gw}*$t2->{gw} ]);
-  unshift(@{$t->{items}}, [ "Black water", 3.8*$SGbw*$t->{bw}*$t2->{bw} ]);
-  
-  $i = "";
-  $j = 0;
-  foreach (@{$t->{items}}) {
-    $j += $_->[1];
-    $i .= $_->[0] . " \& \\unit[" . $_->[1] . "]{kg} \\\\\n";
-  }
-  $i .= "\\hline\n";
-  $i .= "Total \& \\unit[".$j."]{kg}\n";
-
-  $dh = $dls + $j;
-  $i;
---@]
-    \end{tabular*}
-  \end{center}
-
-Let the total weight added be \Zwh. Then we have:
-
-\begin{align} \label{eq:dh}
-  \Zdh &= \Zdls + \Zwh \nonumber\\
-       &= \boxed{\unit[[@--$dh--@]]{kg}} \\
+\begin{align}
+  \Zdh &= \Zdls + \Zwh \label{eq:dh}\\
+  \Zdc &= \Zdh + 3.8 \cdot S \cdot Q \label{eq:dc}
 \end{align}
-
-Then, the total displacement at the load condition is:
-
-\begin{equation} \label{eq:dc}
-  \Zdc = \Zdh + 3.8 \cdot S \cdot Q
-\end{equation}
 
 where \Zwh\ is the additional weight (\unit{kg}), $Q$ is the fuel load
 (\unit{gal}) and $S$ is the specific gravity of the fuel oil.
@@ -236,14 +166,14 @@ Let $\Ze = 3.8 S \Zo$. Then, we have:
 The solution to \eqref{eq:dqdrfin} is given by:
 
 \begin{equation} \label{eq:dqdrsolved}
-  Q(r) = Q_0 e^{-\Ze r} + \Zdh \frac{\Zo}{\Ze} \left[e^{-\Ze r} - 1 \right]
+  Q(r) = \Zqzero e^{-\Ze r} + \Zdh \frac{\Zo}{\Ze} \left[e^{-\Ze r} - 1 \right]
 \end{equation}
 
-where $Q_0$ is the fuel load (gal) at $r = 0$. Since $Q(r) = 0$ at
-maximum range we can solve for $Q_0$, obtaining:
+where \Zqzero\ is the fuel load (gal) at $r = 0$. Since $Q(r) = 0$ at
+maximum range we can solve for \Zqzero, obtaining:
 
 \begin{equation} \label{eq:q0}
-  Q(R) = 0 \implies Q_0 = \Zdh \frac{\Zo}{\Ze} \left[e^{\Ze R} - 1 \right]
+  Q(R) = 0 \implies \Zqzero = \Zdh \frac{\Zo}{\Ze} \left[e^{\Ze R} - 1 \right]
 \end{equation}
 
 where $R$ is the maximum range (\unit{nm}).
@@ -254,45 +184,23 @@ difference we perform a substitution in \eqref{eq:q0} as follows:
 
 \begin{align}
   \Zdh &\rightarrow \Zdh + 3.8 S \left( \Zqre + \Zqun \right) \nonumber\\
-       &\rightarrow \Zdh + 3.8 S \left( x Q_0 + \Zqun \right) \nonumber\\
-       &\rightarrow \left( \Zdh + \frac{\Ze}{\Zo} \Zqun \right) + x \frac{\Ze}{\Zo} Q_0
+       &\rightarrow \Zdh + 3.8 S \left( \Zxres \Zqzero + \Zqun \right) \nonumber\\
+       &\rightarrow \left( \Zdh + \frac{\Ze}{\Zo} \Zqun \right) + \Zxres \frac{\Ze}{\Zo} \Zqzero
 \end{align}
 
-[@--
-  $c = $wb{requirements}{fuel_cons};
-  $R = $wb{requirements}{range};
-  $x = $wb{requirements}{reserve};
-  $vs_cru = $wb{requirements}{Vs_cru};
-
-  $omega    = $c * $vs_cru / ($k ** 2 * sqrt($loa)) * (2.2 / 2240 / sqrt(3.28));
-  $epsilon  = 3.8 * $SGfo * $omega;
-  $qun      = 10;
-
-  $N        = $omega / $epsilon * (exp($epsilon * $R) - 1);
-
-  $ql       = ($dh * $omega / $epsilon + $qun);
-  $qr       = (exp($epsilon * $R) - 1) / (1 - $x * (exp($epsilon * $R) - 1));
-
-  $q0       = &p0($ql * $qr);
-
-  undef;
---@]
-
-where $x$ is the reserve factor and \Zqun\ is the unsuable fuel volume
-(\unit{gal}). Then, with $c = [@--$c--@], x = [@--$x--@], 
-\Zqun = [@--$qun--@]$, we have:
+where \Zxres\ is the reserve factor and \Zqun\ is the unsuable fuel volume
+(\unit{gal}). Then we have:
 
 \begin{align} \label{eq:q02}
-  Q_0 &= \left( \Zdh \frac{\Zo}{\Ze} + \Zqun \right) \left[ \frac{e^{\Ze R} - 1}{1 - x \left( e^{\Ze r} - 1 \right)} \right] \\
-      &= \boxed{\unit[[@--$q0--@]]{gal}}
+  \Zqzero &= \left( \Zdh \frac{\Zo}{\Ze} + \Zqun \right) \left[ \frac{e^{\Ze R} - 1}{1 - \Zxres \left( e^{\Ze r} - 1 \right)} \right]
 \end{align}
 
 The actual fuel tank capacity, \Zqfo, is the fuel required to reach the maximum
-range (including reserve), $Q_0$, plus the unusable volume of fuel. Thus,
+range (including reserve), \Zqzero, plus the unusable volume of fuel. Thus,
 we have:
 
 \begin{equation} \label{eq:qfo}
-  \Zqfo = Q_0 + \Zqun
+  \Zqfo = \Zqzero + \Zqun
 \end{equation}
 
 With a value for \Zqfo\ we can derive the load condition displacement
@@ -303,7 +211,7 @@ given by:
   \Zdc = \Zdh + 3.8 \cdot S \cdot \Zqfo
 \end{equation}
 
-\subsection{Projected Chine Area}
+\subsection{Projected Chine Area} \label{sec:prelim:ap}
 
 The initial value for projected chine area is determined by the target
 chine loading factor at full-load displacement, using the following
@@ -329,12 +237,12 @@ recommended value for $k$ and solve for \Zap, obtaining:
 
 where \Zrhosw\ is the density of salt water (\unitfrac{kg}{m$^3$}).
 
-\subsection{Longitudinal Center of Gravity}
+\subsection{Longitudinal Center of Gravity} \label{sec:prelim:lcg}
 
 The target \Zlcg\ is derived from a parameteric study by Don Blount;
 a graph relating \Zlcg\ to speed-length ratio $\sfrac{S}{L}$.
 
-\subsection{Center of Projected Chine Area}
+\subsection{Center of Projected Chine Area} \label{sec:prelim:cap}
 
 The longitudinal centroid of the projected chine area, \Zcap, is
 determined by stability considerations, which require that the
@@ -346,22 +254,217 @@ That is to say:
   \Zcap \leq \Zlcg - .05 \Zchl
 \end{equation}
 
+\clearpage
+
+\begin{table}[h] \label{tab:prelim:wtr}
+  \begin{center}
+    \begin{tabular*}{0.5\textwidth}{@{\extracolsep{\fill}} l r }
+      Item & Weight \\
+      \hline
 [@--
+  $t    = $wb{requirements}{load}{trials};
+  $t2   = $wb{tanks};
+  $SGfo = $wb{const}{SGfo};
+  $fo   = $wb{requirements}{trialsfo};
+
+  $dls    = &p0(30 * ($loa)**(2.3));
+
+  $qfw    = &p0($wb{requirements}{fw});
+
+  $qgw    = &p0($qfw / 2);
+  $t2->{gw} = $qgw;
+
+  $rbw    = 1.5;
+  $npax   = $wb{requirements}{load}{full}{pax};
+  $ndays  = $wb{requirements}{endur};
+  $qbw    = &p0($rbw * $npax * $ndays);
+  $t2->{bw} = $qbw;
+
+  unshift(@{$t->{items}}, [ "Fuel", 3.8*$SGfo*$fo ]);
+  unshift(@{$t->{items}}, [ "Black water", 3.8*$SGbw*$t->{bw}*$t2->{bw} ]);
+  unshift(@{$t->{items}}, [ "Gray water",  3.8*$SGgw*$t->{gw}*$t2->{gw} ]);
+  unshift(@{$t->{items}}, [ "Fresh water", 3.8*$t->{fw}*$t2->{fw} ]);
+  
+  $i = "";
+  $j = 0;
+  foreach (@{$t->{items}}) {
+    $_->[1] = &p0($_->[1]);
+    $j += $_->[1];
+    $i .= $_->[0] . " \& \\unit[" . $_->[1] . "]{kg} \\\\\n";
+  }
+  $i .= "\\hline\n";
+  $i .= "Total \& \\unit[".$j."]{kg}\n";
+
+  $wtr = $j;
+  $dtr = $dls + $wtr;
+
+  $i;
+--@]
+  
+    \end{tabular*}
+  \end{center}
+  \caption{Added weights, trials}
+\end{table}
+
+\begin{table}[h] \label{tab:prelim:wc}
+  \begin{center}
+    \begin{tabular*}{0.5\textwidth}{@{\extracolsep{\fill}} l r }
+      Item & Weight \\
+      \hline
+[@--
+  $t = $wb{requirements}{load}{range};
+  $t2= $wb{tanks};
+  $SGbw = $wb{const}{SGbw};
+  $SGgw = $wb{const}{SGgw};
+
+  unshift(@{$t->{items}}, [ "Black water", 3.8*$SGbw*$t->{bw}*$t2->{bw} ]);
+  unshift(@{$t->{items}}, [ "Gray water",  3.8*$SGgw*$t->{gw}*$t2->{gw} ]);
+  unshift(@{$t->{items}}, [ "Fresh water", 3.8*$t->{fw}*$t2->{fw} ]);
+  
+  $i = "";
+  $j = 0;
+  foreach (@{$t->{items}}) {
+    $_->[1] = &p0($_->[1]);
+    $j += $_->[1];
+    $i .= $_->[0] . " \& \\unit[" . $_->[1] . "]{kg} \\\\\n";
+  }
+  $i .= "\\hline\n";
+  $i .= "Total \& \\unit[".$j."]{kg}\n";
+
+  $wc = $j;
+  $dh = $dls + $wc;
+
+  $i;
+--@]
+    \end{tabular*}
+  \end{center}
+  \caption{Added weights, operating}
+\end{table}
+
+\begin{table}[h] \label{tab:prelim:wf}
+  \begin{center}
+    \begin{tabular*}{0.5\textwidth}{@{\extracolsep{\fill}} l r }
+      Item & Weight \\
+      \hline
+[@--
+  $t = $wb{requirements}{load}{full};
+  $t2= $wb{tanks};
+  $SGbw = $wb{const}{SGbw};
+  $SGgw = $wb{const}{SGgw};
+
+  unshift(@{$t->{items}}, [ "Black water", 3.8*$SGbw*$t->{bw}*$t2->{bw} ]);
+  unshift(@{$t->{items}}, [ "Gray water",  3.8*$SGgw*$t->{gw}*$t2->{gw} ]);
+  unshift(@{$t->{items}}, [ "Fresh water", 3.8*$t->{fw}*$t2->{fw} ]);
+  
+  $i = "";
+  $j = 0;
+  foreach (@{$t->{items}}) {
+    $_->[1] = &p0($_->[1]);
+    $j += $_->[1];
+    $i .= $_->[0] . " \& \\unit[" . $_->[1] . "]{kg} \\\\\n";
+  }
+  $i .= "\\hline\n";
+  $i .= "Total \& \\unit[".$j."]{kg}\n";
+
+  $wf = $j;
+
+  $i;
+--@]
+    \end{tabular*}
+  \end{center}
+  \caption{Added weights, full-load departure}
+\end{table}
+
+\clearpage
+
+[@--
+
+  $k      = $wb{requirements}{barnaby_k};
+  $vs_max = $wb{requirements}{Vs_max};
+  $shp    = &p0($dtr * $vs_max ** 2 / $k ** 2 / sqrt($loa) * 
+                  (2.2 / 2240 / sqrt(3.28)));
+  $bhp    = &p0($shp / .97);
+
+  $dcname = $wb{requirements}{load}{range}{name};
+
+  $vs_cru = $wb{requirements}{Vs_cru};
+  $c      = $wb{requirements}{fuel_cons};
+  $qun    = $wb{requirements}{qun};
+  $xres   = $wb{requirements}{reserve};
+  $R      = $wb{requirements}{range};
+
+  $omega  = $c * $vs_cru / $k ** 2 / sqrt($loa) * 2.2 / 2240 / sqrt(3.28);
+  $epsilon= 3.8 * $SGfo * $omega;
+
+  $q0_lh  = $dh * $omega / $epsilon + $qun;
+  $q0_rh  = (exp($epsilon * $R) - 1) / (1 - $xres * (exp($epsilon * $R) - 1));
+  $q0     = &p0($q0_lh * $q0_rh);
+  $qfo    = &p0($q0 + $qun);
 
   @tb = (
     [ "dls" ],
-    [ "\\Zloa", "Length overall", "From requirements", $loa, ["m"] ],
-    [ '\\Zdls', "Displacement, light ship", ":dls", $dls, ["kg"] ],
+    [ "\\Zloa", "Length overall", "Requirements", $loa, ["m"] ],
+    [ "\\Zdls", "Displ, light ship", ":dls", $dls, ["kg"] ],
     [ "tanks" ],
-    [ '\\Zqfw', "Capacity, F.W.", "From requirements", $qfw, ["gal"] ],
-    [ '\\Zqgw', "Capacity, G.W.", "", $qfw, ["gal"] ],
+    [ "\\Zqfw", "Capacity, F.W.", "Requirements", $qfw, ["gal"] ],
+    [ "\\Zqgw", "Capacity, G.W.", ":qgw", $qgw, ["gal"] ],
+    [ "\$q\$", "Black water rate", "Approx", $rbw, ["\$\\frac{\\text{gal}}{\\text{pax} \\cdot \\text{day}}\$"] ],
+    [ "\\Znpax", "Number of people", "Requirements", $npax, ["pax"] ],
+    [ "\\Zndays", "Number of days", "Requirements", $ndays, ["day"] ],
+    [ "\\Zqbw", "Capacity, B.W.", ":qbw", $qbw, ["gal"] ],
+    [ "dtr" ],
+    [ "\\Zwtr", "Added weight", "Table 1", $wtr, ["kg"] ],
+    [ "\\Zdtr", "Displ, trials", ":dtr", $dtr, ["kg"] ],
+    [ "hp" ],
+    [ "k", "Constant", ":barnaby", $k, [""] ],
+    [ "\\Zvmax", "Speed, trials", "Requirements", $vs_max, ["kt"] ],
+    [ "\\Zshp", "Shaft forsepower", ":shp", $shp, ["hp"] ],
+    [ "\\Zbhp", "Brake forsepower", ":bhp", $bhp, ["hp"] ],
+    [ "qfo" ],
+    [ "\\Zwc", "Added weight", "Table 2", $wc, ["kg"] ],
+    [ "\\Zdh", "Displ, ".$dcname." (no fuel)", ":dh", $dh, ["kg"] ],
+    [ "\\Zqun", "Fuel (unusable)", "Approx", $qun, ["gal"] ],
+    [ "\\Zxres", "Fuel reserve factor", "Requirements", $xres, [""] ],
+    [ "\$c\$", "Fuel consumption rate", "Approx", $c, ["\$\\frac{\\text{gal}}{\\text{hp} \\cdot \\text{hr}}\$"] ],
+    [ "\$R\$", "Range", "Requirement", $R, ["nm"] ],
+    [ "\\Zvcru", "Speed, cruising", "Requirement", $vs_cru, ["kt"] ],
+    [ "\\Zqzero", "Fuel capacity (usable)", ":q02", $q0, ["gal"] ],
+    [ "\\Zqfo", "Fuel capacity (usable)", ":qfo", $qfo, ["gal"] ],
   );
 
+  undef;
 --@]
 
+\begin{table}[h] \label{tab:prelim:calcs}
 \begin{center}
-  \begin{tabular*}{0.75\textwidth}{@{\extracolsep{\fill}} l r }
+  \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}} | p{.75cm} p{4.5cm} p{2.5cm} r p{1cm} | }
+    \hline
+    Sym. & Description & From & Value & Unit \\
+
+[@--
+  $i = "";
+  foreach (@tb) {
+    @_ = @{$_};
+    if ($#{_} == 0) {
+      $i .= "\\hline\n";
+      $i .= " & & & & \\\\\n";
+      $i .= "\\multicolumn{5}{| l |}{\\bfseries{\\ref{sec:prelim:".$_[0]."} \\nameref{sec:prelim:".$_[0]."}}} \\\\\n";
+      $i .= "\\hline\n";
+    } else {
+      my $j = ($_[2] =~ /^:/ ? "Equation \\eqref{eq".$_[2]."}" : $_[2]);
+      my @k = @{$_[4]};
+      my $k = ($#k > 0 ? "frac" : "")."{".(join("}{", @k))."}";
+      $i .= $_[0]." \& ".$_[1]." \& $j \& ".$_[3]." \& \\unit$k \\\\\n";
+    }
+  }
+
+  $i;
+--@]
+
+    \hline
   \end{tabular*}
 \end{center}
+\caption{Preliminary design calculations}
+\end{table}
 
 \clearpage

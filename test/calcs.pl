@@ -107,9 +107,11 @@ use Math::Units qw(convert);
     $t->{trialsfo}  = 100;  # gal
     $t->{barnaby_k} = $drive{"two conventional shafts"};  # gal
     $t->{fuel_cons} = .05;  # gal/hp/hr
+    $t->{qun}       = 10;   # gal
 
     $t->{load} = {
       trials => {
+        name  => "trials",
         pax   => 2,   # ppl
         fo    => 0,   # %
         fw    => 0,   # %
@@ -120,6 +122,7 @@ use Math::Units qw(convert);
         ]
       },
       range => {
+        name  => "\\sfrac{3}{4} load",
         pax   => 4,   # ppl
         fo    => 1,   # %
         fw    => .75, # %
@@ -132,6 +135,7 @@ use Math::Units qw(convert);
         ]
       },
       full => {
+        name  => "full-load",
         pax   => 4,   # ppl
         fo    => 1,   # %
         fw    => 1,   # %
