@@ -1,0 +1,97 @@
+\documentclass{article}
+\setcounter{tocdepth}{1}
+\usepackage{tabularx}
+\usepackage{xfrac}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{sepnum}
+\usepackage{units}
+\usepackage{titlesec}
+\usepackage{hyperref}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\newcommand{\s}[1]{\sepnum{.}{,}{}{#1}}
+\newcommand{\Zmakevar}[2]{\ensuremath{\mathit{#1}_{\mathrm{#2}}}}
+
+\newcommand{\Zlcg}{\Zmakevar{L}{CG}}
+\newcommand{\Zap}{\Zmakevar{A}{p}}
+\newcommand{\Zcap}{\Zmakevar{C}{\Zap}}
+\newcommand{\Zchl}{\Zmakevar{l}{p}}
+\newcommand{\Zloa}{\Zmakevar{L}{OA}{}}
+\newcommand{\Zd}{\Zmakevar{\Delta}{}}
+\newcommand{\Zdls}{\Zmakevar{\Delta}{LS}}
+\newcommand{\Zdtr}{\Zmakevar{\Delta}{trial}}
+\newcommand{\Zwtr}{\Zmakevar{w}{trial}}
+\newcommand{\Zdh}{\Zmakevar{\Delta}{H}}
+\newcommand{\Zwh}{\Zmakevar{w}{H}}
+\newcommand{\Zdc}{\Zmakevar{\Delta}{C}}
+\newcommand{\Zdfl}{\Zmakevar{\Delta}{FL}}
+\newcommand{\Zvs}{\Zmakevar{V}{S}}
+\newcommand{\Zvmax}{\Zmakevar{V}{S,max}}
+\newcommand{\Zvcru}{\Zmakevar{V}{S,cru}}
+\newcommand{\Zbhp}{\Zmakevar{P}{B}}
+\newcommand{\Zshp}{\Zmakevar{P}{S}}
+\newcommand{\Zo}{\Zmakevar{\omega}{}}
+\newcommand{\Zqfo}{\Zmakevar{Q}{FO}}
+\newcommand{\Zqre}{\Zmakevar{Q}{reserve}}
+\newcommand{\Zqun}{\Zmakevar{Q}{unusable}}
+\newcommand{\Zqfw}{\Zmakevar{Q}{FW}}
+\newcommand{\Zqgw}{\Zmakevar{Q}{GW}}
+\newcommand{\Zqbw}{\Zmakevar{Q}{BW}}
+\newcommand{\Ze}{\Zmakevar{\varepsilon}{}}
+\newcommand{\Zv}{\Zmakevar{\nabla}{}}
+\newcommand{\Zvfl}{\Zmakevar{\nabla}{FL}}
+\newcommand{\Zrhosw}{\Zmakevar{\rho}{SW}}
+\newcommand{\Znpax}{\Zmakevar{n}{pax}}
+\newcommand{\Zndays}{\Zmakevar{n}{days}}
+
+\begin{document}
+
+  \begin{titlepage}
+    \begin{center}
+      \textsc{\LARGE Landing School}\\[1.5cm]
+
+      \HRule \\[0.4cm]
+      { \huge \bfseries [@-- $wb{hydrostatics}{name} --@] }\\[0.4cm]
+      \HRule \\[2cm]
+
+      {\Large Design Calculations}\\[0.4cm]
+      Micha Niskin \\[0.4cm]
+      \today \\[2cm]
+
+      [@-- %q = %{$wb{hydrostatics}}; undef; --@]
+
+      \begin{tabular}{p{4cm} r l}
+        LOA                       & [@-- $q{LOA} --@]     & m \\
+        DWL                       & [@-- $q{LWL} --@]     & m \\
+        Beam                      & [@-- $q{BOA} --@]     & m \\
+        Draft                     & [@-- $q{T} --@]       & m \\
+        Displacement              & [@-- $q{displ} --@]   & kg \\
+
+        [@-- %q = %{$wb{requirements}}; undef; --@]
+
+        Power                     & 2 $\times$ 350        & hp \\
+        Speed (maximum)           & [@-- $q{Vs_max} --@]  & kt \\
+        Speed (cruise)            & [@-- $q{Vs_cru} --@]  & kt \\
+        Range (at cruise)         & [@-- $q{range} --@]   & nm \\
+      \end{tabular}
+
+    \end{center}
+  \end{titlepage}
+
+  \tableofcontents
+  \listoftables
+  \pagebreak
+
+\setlength{\parindent}{0in}
+\setlength{\parskip}{4mm plus2mm minus2mm}
+
+\titleformat{\subsection}[runin]
+  {\normalfont\bfseries}
+  {\thesubsection.}{.5em}{}[.]
+\titlespacing{\subsection}
+  {\parindent}{1.5ex plus .1ex minus .2ex}{1em}
+
+[@-- $sections --@]
+
+\end{document}

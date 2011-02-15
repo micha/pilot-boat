@@ -1,0 +1,11 @@
+*.swp
+*.swo
+*~
+*.toc
+*.aux
+*.log
+*.lot
+*.out
+*.pdf
+*.tex
+.DS_Store

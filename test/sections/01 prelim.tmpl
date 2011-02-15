@@ -1,0 +1,367 @@
+
+\section{Preliminary Design Parameters}
+
+\subsection{Lightship Displacement} \label{sec:dls}
+
+Lightship condition, \Zdls, is the ``shipping weight", i.e. the
+weight of the boat without fuel, water, stores, people, etc. We obtain
+the initial value for the lightship displacement from the Blount
+formula (adjusted for units):
+
+\begin{equation} \label{eq:blount}
+  \Zd = k {\Zloa}^{2.3}, \quad k =
+  \begin{cases}
+    30 & \text{lightship} \\
+    45 & \text{full-load}
+  \end{cases}
+\end{equation}
+
+where \Zd\ is displacement (kg) and \Zloa\ is length overall (m).
+Thus, we have:
+
+[@--
+  $loa = $wb{hydrostatics}{LOA};
+  $dls = &p0(30 * ($loa ** (2.3)));
+
+  undef;
+--@]
+
+\begin{align} \label{eq:dls}
+  \Zdls &= 30 {\Zloa}^{2.3} \\
+        &= \boxed{\unit[[@--$dls--@]]{kg}}
+\end{align}
+
+\subsection{Gray and Black Water Tank Capacities} \label{sec:tanks}
+
+The tank capacities are determined by the endurance requirements and
+the fresh water capacity.
+
+\begin{align}
+  \Zqgw &= 0.5 \Zqfw \label{eq:qgw} \\
+  \Zqbw &= q \Znpax \Zndays \label{eq:qbw} 
+\end{align}
+
+
+\subsection{Trials Displacement} \label{sec:dtr}
+
+Sea trials will be conducted with minimal fuel, two passengers, and no
+water or stores other than required safety equipment. With these weights
+we obtain the trials displacement:
+
+  \begin{center}
+    \begin{tabular*}{0.5\textwidth}{@{\extracolsep{\fill}} l r }
+      Item & Weight \\
+      \hline
+[@--
+  $t    = $wb{requirements}{load}{trials};
+  $t2   = $wb{tanks};
+  $SGfo = $wb{const}{SGfo};
+  $fo   = $wb{requirements}{trialsfo};
+
+  unshift(@{$t->{items}}, [ "Fuel", 3.8*$SGfo*$fo ]);
+  
+  $i = "";
+  $j = 0;
+  foreach (@{$t->{items}}) {
+    $j += $_->[1];
+    $i .= $_->[0] . " \& \\unit[" . $_->[1] . "]{kg} \\\\\n";
+  }
+  $i .= "\\hline\n";
+  $i .= "Total \& \\unit[".$j."]{kg}\n";
+
+  $dtr = $dls + $j;
+
+  $i;
+--@]
+  
+    \end{tabular*}
+  \end{center}
+
+
+\begin{align} \label{eq:dtr}
+  \Zdtr &= \Zdls + \Zwtr \\
+        &= \boxed{\unit[[@--$dtr--@]]{kg}}
+\end{align}
+
+[@--
+  $tk_fw = 20; # gal
+  $tk_gw = $tk_fw / 2;
+
+  push(@o, {
+    i => "Trials displacement",
+    v => [
+      { s => "\\Zdls",
+        d => "{eq:dtr}",
+        v => 30 * $loa ** (2/3)
+      }
+    ]
+  });
+
+  undef;
+--@]
+
+where \Zwtr\ is the total weight of fuel, passengers, and safety equipment (kg).
+
+\subsection{Required Horsepower}
+
+The maximum speed, trials displacement condition is the dominating one
+for the initial power requirement estimate. The Barnaby-Levi approximation
+relates speed, required horsepower, displacement, and length overall.
+
+\begin{equation} \label{eq:barnaby}
+  \Zvs = k {\Zloa}^{\frac{1}{4}} \sqrt{\frac{\Zshp}{\Zd}}, \quad k =
+  \begin{cases}
+    1.4 & \text{four conventional shafts} \\
+    1.5 & \text{two conventional shafts} \\
+    1.6 & \text{standard stern drives} \\
+    1.8 & \text{racing stern drives}
+  \end{cases}
+\end{equation}
+
+where \Zvs\ is boat speed (kt), \Zloa\ is length overall (ft), \Zd\ is
+displacement (lt), and \Zshp\ is shaft horsepower (hp). Adding a conversion
+factor for units and rearranging \eqref{eq:barnaby} we obtain an equation
+for \Zshp.
+
+[@--
+  $vs_max  = $wb{requirements}{Vs_max};
+  $k   = 1.5;
+  $shp = &p0($dtr * ($vs_max ** 2) / 
+            ($wb{requirements}{barnaby_k} ** 2 * sqrt($loa)) *
+            (2.2 / 2240 / sqrt(3.28)));
+  $bhp = &p0($shp / .97);
+
+  undef;
+--@]
+
+\begin{align} \label{eq:shp}
+  \Zshp &= \frac{\Zdtr {\Zvs}^2}{{k}^2 \sqrt{\Zloa}}
+            \left(\frac{2.2}{2240 \sqrt{3.28}}\right) \\
+        &= \boxed{\unit[[@--$shp--@]]{hp}}
+\end{align}
+
+where \Zdtr\ is in \unit{kg} and \Zloa\ is in \unit{m}. Shaft horsepower
+is approximately 97\% of brake horsepower. Therefore we have:
+
+\begin{align} \label{eq:bhp}
+  \Zbhp &= \frac{\Zshp}{.97} \\
+        &= \boxed{\unit[[@--$bhp--@]]{hp}}
+\end{align}
+
+\subsection{Fuel Capacity}
+
+Fuel capacity is determined by the maximum range requirement at a given
+load condition, \Zdc. First, the displacement of the vessel, minus fuel,
+is calculated by adding known weights to the lightship displacement
+obtained from \eqref{eq:dls}. Then we have:
+
+  \begin{center}
+    \begin{tabular*}{0.5\textwidth}{@{\extracolsep{\fill}} l r }
+      Item & Weight \\
+      \hline
+[@--
+  $t = $wb{requirements}{load}{range};
+  $t2= $wb{tanks};
+  $SGbw = $wb{const}{SGbw};
+  $SGgw = $wb{const}{SGgw};
+
+  unshift(@{$t->{items}}, [ "Fresh water", 3.8*$t->{fw}*$t2->{fw} ]);
+  unshift(@{$t->{items}}, [ "Gray water",  3.8*$SGgw*$t->{gw}*$t2->{gw} ]);
+  unshift(@{$t->{items}}, [ "Black water", 3.8*$SGbw*$t->{bw}*$t2->{bw} ]);
+  
+  $i = "";
+  $j = 0;
+  foreach (@{$t->{items}}) {
+    $j += $_->[1];
+    $i .= $_->[0] . " \& \\unit[" . $_->[1] . "]{kg} \\\\\n";
+  }
+  $i .= "\\hline\n";
+  $i .= "Total \& \\unit[".$j."]{kg}\n";
+
+  $dh = $dls + $j;
+  $i;
+--@]
+    \end{tabular*}
+  \end{center}
+
+Let the total weight added be \Zwh. Then we have:
+
+\begin{align} \label{eq:dh}
+  \Zdh &= \Zdls + \Zwh \nonumber\\
+       &= \boxed{\unit[[@--$dh--@]]{kg}} \\
+\end{align}
+
+Then, the total displacement at the load condition is:
+
+\begin{equation} \label{eq:dc}
+  \Zdc = \Zdh + 3.8 \cdot S \cdot Q
+\end{equation}
+
+where \Zwh\ is the additional weight (\unit{kg}), $Q$ is the fuel load
+(\unit{gal}) and $S$ is the specific gravity of the fuel oil.
+
+The rate at which fuel is consumed (\sfrac{gal}{nm}) is given by:
+
+\begin{equation} \label{eq:dqdr}
+  \frac{dQ}{dr} = - \frac{c}{\Zvs} \Zshp 
+\end{equation}
+
+where $r$ is distance run (\unit{nm}), $c$ is fuel consumption rate
+(\unitfrac{gal}{{hp} $\cdot$ {hr}}), \Zshp\ is shaft horsepower (\unit{hp}),
+and \Zvs\ is boat speed (\unit{kt}).
+
+Inserting \eqref{eq:shp} into \eqref{eq:dqdr} we have:
+
+\begin{equation} \label{eq:dqdrHp}
+  \frac{dQ}{dr} = -{} \left[\frac{c \Zvs}{k^2 \sqrt{L}}
+                    \left(\frac{2.2}{2240 \sqrt{3.28}}\right) \right] \Zdc
+\end{equation}
+
+For the purposes of range and fuel capacity we hold \Zvs\ constant in
+\eqref{eq:dqdrHp}, and collect all the constants into \Zo. Decomposing
+\Zdc\ we have:
+
+\begin{align} \label{eq:dqdrfin}
+  \frac{dQ}{dr} &= -\Zo \Zdc \nonumber\\
+    &= -\Zo \left( \Zdh + 3.8 S \cdot Q(r) \right) \nonumber\\
+    &= -\Zo \Zdh - 3.8 S \cdot \Zo \cdot Q(r)
+\end{align}
+
+Let $\Ze = 3.8 S \Zo$. Then, we have:
+
+\begin{equation} \label{eq:dqdrfin}
+  \frac{dQ}{dr} + \Ze Q(r) + \Zo \Zdh = 0
+\end{equation}
+
+The solution to \eqref{eq:dqdrfin} is given by:
+
+\begin{equation} \label{eq:dqdrsolved}
+  Q(r) = Q_0 e^{-\Ze r} + \Zdh \frac{\Zo}{\Ze} \left[e^{-\Ze r} - 1 \right]
+\end{equation}
+
+where $Q_0$ is the fuel load (gal) at $r = 0$. Since $Q(r) = 0$ at
+maximum range we can solve for $Q_0$, obtaining:
+
+\begin{equation} \label{eq:q0}
+  Q(R) = 0 \implies Q_0 = \Zdh \frac{\Zo}{\Ze} \left[e^{\Ze R} - 1 \right]
+\end{equation}
+
+where $R$ is the maximum range (\unit{nm}).
+
+This, however, does not account for the weight of the reserve fuel or
+the fuel in the unusable portion of the tank. To correct this (minor)
+difference we perform a substitution in \eqref{eq:q0} as follows:
+
+\begin{align}
+  \Zdh &\rightarrow \Zdh + 3.8 S \left( \Zqre + \Zqun \right) \nonumber\\
+       &\rightarrow \Zdh + 3.8 S \left( x Q_0 + \Zqun \right) \nonumber\\
+       &\rightarrow \left( \Zdh + \frac{\Ze}{\Zo} \Zqun \right) + x \frac{\Ze}{\Zo} Q_0
+\end{align}
+
+[@--
+  $c = $wb{requirements}{fuel_cons};
+  $R = $wb{requirements}{range};
+  $x = $wb{requirements}{reserve};
+  $vs_cru = $wb{requirements}{Vs_cru};
+
+  $omega    = $c * $vs_cru / ($k ** 2 * sqrt($loa)) * (2.2 / 2240 / sqrt(3.28));
+  $epsilon  = 3.8 * $SGfo * $omega;
+  $qun      = 10;
+
+  $N        = $omega / $epsilon * (exp($epsilon * $R) - 1);
+
+  $ql       = ($dh * $omega / $epsilon + $qun);
+  $qr       = (exp($epsilon * $R) - 1) / (1 - $x * (exp($epsilon * $R) - 1));
+
+  $q0       = &p0($ql * $qr);
+
+  undef;
+--@]
+
+where $x$ is the reserve factor and \Zqun\ is the unsuable fuel volume
+(\unit{gal}). Then, with $c = [@--$c--@], x = [@--$x--@], 
+\Zqun = [@--$qun--@]$, we have:
+
+\begin{align} \label{eq:q02}
+  Q_0 &= \left( \Zdh \frac{\Zo}{\Ze} + \Zqun \right) \left[ \frac{e^{\Ze R} - 1}{1 - x \left( e^{\Ze r} - 1 \right)} \right] \\
+      &= \boxed{\unit[[@--$q0--@]]{gal}}
+\end{align}
+
+The actual fuel tank capacity, \Zqfo, is the fuel required to reach the maximum
+range (including reserve), $Q_0$, plus the unusable volume of fuel. Thus,
+we have:
+
+\begin{equation} \label{eq:qfo}
+  \Zqfo = Q_0 + \Zqun
+\end{equation}
+
+With a value for \Zqfo\ we can derive the load condition displacement
+\Zdc\ from \eqref{eq:dc}. The load condiditon displacement is therefore
+given by:
+
+\begin{equation} \label{eq:dc2}
+  \Zdc = \Zdh + 3.8 \cdot S \cdot \Zqfo
+\end{equation}
+
+\subsection{Projected Chine Area}
+
+The initial value for projected chine area is determined by the target
+chine loading factor at full-load displacement, using the following
+equation:
+
+\begin{equation} \label{eq:chineloading}
+  \frac{\Zap}{{\Zvfl}^{\frac{2}{3}}} =
+  \begin{cases}
+    5.2 & \text{minimum (except new construction)} \\
+    5.5 & \text{minimum for new construction} \\
+    6.0 & \text{recommended value} \\
+  \end{cases}
+\end{equation}
+
+where \Zap\ is projected chine area (m$^2$) and \Zvfl\ is volume
+at full-load condition (m$^3$). For new construction we choose the
+recommended value for $k$ and solve for \Zap, obtaining:
+
+\begin{align} \label{eq:ap}
+  \Zap &= 6.0 {\Zvfl}^{\frac{2}{3}} \nonumber\\
+       &= 6.0 \left( \frac{\Zdfl}{\Zrhosw} \right)^{\frac{2}{3}}
+\end{align}
+
+where \Zrhosw\ is the density of salt water (\unitfrac{kg}{m$^3$}).
+
+\subsection{Longitudinal Center of Gravity}
+
+The target \Zlcg\ is derived from a parameteric study by Don Blount;
+a graph relating \Zlcg\ to speed-length ratio $\sfrac{S}{L}$.
+
+\subsection{Center of Projected Chine Area}
+
+The longitudinal centroid of the projected chine area, \Zcap, is
+determined by stability considerations, which require that the
+longitudinal separation between the \Zcap\ and \Zlcg\ be no less
+than 5\% of the chine length, \Zchl, with \Zcap\ forward of \Zlcg.
+That is to say:
+
+\begin{equation}
+  \Zcap \leq \Zlcg - .05 \Zchl
+\end{equation}
+
+[@--
+
+  @tb = (
+    [ "dls" ],
+    [ "\\Zloa", "Length overall", "From requirements", $loa, ["m"] ],
+    [ '\\Zdls', "Displacement, light ship", ":dls", $dls, ["kg"] ],
+    [ "tanks" ],
+    [ '\\Zqfw', "Capacity, F.W.", "From requirements", $qfw, ["gal"] ],
+    [ '\\Zqgw', "Capacity, G.W.", "", $qfw, ["gal"] ],
+  );
+
+--@]
+
+\begin{center}
+  \begin{tabular*}{0.75\textwidth}{@{\extracolsep{\fill}} l r }
+  \end{tabular*}
+\end{center}
+
+\clearpage
