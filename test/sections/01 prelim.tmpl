@@ -211,6 +211,18 @@ given by:
   \Zdc = \Zdh + 3.8 \cdot S \cdot \Zqfo
 \end{equation}
 
+\subsection{Full-Load Displacement} \label{sec:prelim:df}
+
+Full-load condition is calculated by adding to the light ship displacement 
+the weight of people, fuel, water, stores, etc. as they would be loaded at
+departure under normal operating circumstances.
+
+\begin{equation} \label{eq:df}
+  \Zdf = \Zdls + \Zwf + \Zqfo
+\end{equation}
+
+where \Zwf\ is the added weight for this load condition.
+
 \subsection{Projected Chine Area} \label{sec:prelim:ap}
 
 The initial value for projected chine area is determined by the target
@@ -232,7 +244,7 @@ recommended value for $k$ and solve for \Zap, obtaining:
 
 \begin{align} \label{eq:ap}
   \Zap &= 6.0 {\Zvfl}^{\frac{2}{3}} \nonumber\\
-       &= 6.0 \left( \frac{\Zdfl}{\Zrhosw} \right)^{\frac{2}{3}}
+       &= 6.0 \left( \frac{\Zdf}{\Zrhosw} \right)^{\frac{2}{3}}
 \end{align}
 
 where \Zrhosw\ is the density of salt water (\unitfrac{kg}{m$^3$}).
@@ -247,20 +259,18 @@ a graph relating \Zlcg\ to speed-length ratio $\sfrac{S}{L}$.
 The longitudinal centroid of the projected chine area, \Zcap, is
 determined by stability considerations, which require that the
 longitudinal separation between the \Zcap\ and \Zlcg\ be no less
-than 5\% of the chine length, \Zchl, with \Zcap\ forward of \Zlcg.
+than 5\% of the chine length, \Zlp, with \Zcap\ forward of \Zlcg.
 That is to say:
 
-\begin{equation}
-  \Zcap \leq \Zlcg - .05 \Zchl
-\end{equation}
+\begin{align}
+  \Zcap &\leq \Zlcg - .05 \Zlp \nonumber\\
+        &= \Zlcg - .05 \left( .9 \Zloa \right) \label{eq:cap}
+\end{align}
+
+where we estimate \Zlp\ at 90\% of \Zloa.
 
 \clearpage
 
-\begin{table}[h] \label{tab:prelim:wtr}
-  \begin{center}
-    \begin{tabular*}{0.5\textwidth}{@{\extracolsep{\fill}} l r }
-      Item & Weight \\
-      \hline
 [@--
   $t    = $wb{requirements}{load}{trials};
   $t2   = $wb{tanks};
@@ -284,34 +294,17 @@ That is to say:
   unshift(@{$t->{items}}, [ "Black water", 3.8*$SGbw*$t->{bw}*$t2->{bw} ]);
   unshift(@{$t->{items}}, [ "Gray water",  3.8*$SGgw*$t->{gw}*$t2->{gw} ]);
   unshift(@{$t->{items}}, [ "Fresh water", 3.8*$t->{fw}*$t2->{fw} ]);
+  unshift(@{$t->{items}}, [ "People (".$t->{pax}.")", 80*$t->{pax} ]);
   
-  $i = "";
   $j = 0;
   foreach (@{$t->{items}}) {
     $_->[1] = &p0($_->[1]);
     $j += $_->[1];
-    $i .= $_->[0] . " \& \\unit[" . $_->[1] . "]{kg} \\\\\n";
   }
-  $i .= "\\hline\n";
-  $i .= "Total \& \\unit[".$j."]{kg}\n";
 
   $wtr = $j;
   $dtr = $dls + $wtr;
 
-  $i;
---@]
-  
-    \end{tabular*}
-  \end{center}
-  \caption{Added weights, trials}
-\end{table}
-
-\begin{table}[h] \label{tab:prelim:wc}
-  \begin{center}
-    \begin{tabular*}{0.5\textwidth}{@{\extracolsep{\fill}} l r }
-      Item & Weight \\
-      \hline
-[@--
   $t = $wb{requirements}{load}{range};
   $t2= $wb{tanks};
   $SGbw = $wb{const}{SGbw};
@@ -320,33 +313,17 @@ That is to say:
   unshift(@{$t->{items}}, [ "Black water", 3.8*$SGbw*$t->{bw}*$t2->{bw} ]);
   unshift(@{$t->{items}}, [ "Gray water",  3.8*$SGgw*$t->{gw}*$t2->{gw} ]);
   unshift(@{$t->{items}}, [ "Fresh water", 3.8*$t->{fw}*$t2->{fw} ]);
+  unshift(@{$t->{items}}, [ "People (".$t->{pax}.")", 80*$t->{pax} ]);
   
-  $i = "";
   $j = 0;
   foreach (@{$t->{items}}) {
     $_->[1] = &p0($_->[1]);
     $j += $_->[1];
-    $i .= $_->[0] . " \& \\unit[" . $_->[1] . "]{kg} \\\\\n";
   }
-  $i .= "\\hline\n";
-  $i .= "Total \& \\unit[".$j."]{kg}\n";
 
   $wc = $j;
   $dh = $dls + $wc;
 
-  $i;
---@]
-    \end{tabular*}
-  \end{center}
-  \caption{Added weights, operating}
-\end{table}
-
-\begin{table}[h] \label{tab:prelim:wf}
-  \begin{center}
-    \begin{tabular*}{0.5\textwidth}{@{\extracolsep{\fill}} l r }
-      Item & Weight \\
-      \hline
-[@--
   $t = $wb{requirements}{load}{full};
   $t2= $wb{tanks};
   $SGbw = $wb{const}{SGbw};
@@ -355,29 +332,14 @@ That is to say:
   unshift(@{$t->{items}}, [ "Black water", 3.8*$SGbw*$t->{bw}*$t2->{bw} ]);
   unshift(@{$t->{items}}, [ "Gray water",  3.8*$SGgw*$t->{gw}*$t2->{gw} ]);
   unshift(@{$t->{items}}, [ "Fresh water", 3.8*$t->{fw}*$t2->{fw} ]);
+  unshift(@{$t->{items}}, [ "People (".$t->{pax}.")", 80*$t->{pax} ]);
   
-  $i = "";
   $j = 0;
   foreach (@{$t->{items}}) {
     $_->[1] = &p0($_->[1]);
     $j += $_->[1];
-    $i .= $_->[0] . " \& \\unit[" . $_->[1] . "]{kg} \\\\\n";
   }
-  $i .= "\\hline\n";
-  $i .= "Total \& \\unit[".$j."]{kg}\n";
-
   $wf = $j;
-
-  $i;
---@]
-    \end{tabular*}
-  \end{center}
-  \caption{Added weights, full-load departure}
-\end{table}
-
-\clearpage
-
-[@--
 
   $k      = $wb{requirements}{barnaby_k};
   $vs_max = $wb{requirements}{Vs_max};
@@ -399,56 +361,128 @@ That is to say:
   $q0_lh  = $dh * $omega / $epsilon + $qun;
   $q0_rh  = (exp($epsilon * $R) - 1) / (1 - $xres * (exp($epsilon * $R) - 1));
   $q0     = &p0($q0_lh * $q0_rh);
+
+  $q0     = $omega * $dh / ((.8 / $R) - $epsilon);
   $qfo    = &p0($q0 + $qun);
 
-  @tb = (
-    [ "dls" ],
+  $rhosw  = 1025; # kg / m^3
+  $ap     = 6.0 * ($df ** (2/3));
+
+  $dc     = &p0($dls + $wc + $qfo);
+
+  $df     = &p0($dls + $wf + $qfo);
+
+  $lcg    = &p3(6);
+
+  $lp     = &p3(.9 * $loa);
+  $cap    = &p3($lcg + .05 * $lp);
+
+  @tb = ();
+
+  foreach (keys(%{$wb{requirements}{load}})) {
+    my %t  = %{$wb{requirements}{load}{$_}};
+    my %t2 = %{$wb{tanks}};
+    my @tmp = ();
+
+    push(@tmp, [ "Added weight, ".$t{name}." condition\n"]);
+
+    foreach (@{$t{items}}) {
+      push(@tmp, [ "", $_->[0], "", $_->[1], ["kg"] ]);
+    }
+
+    my $j = 0;
+    map { if ($_->[3] > 0) { $j += $_->[3] } } @tmp;
+
+    push(@tmp, [ $t{symb}, "Added weight, ".$t{name}, "", &p0($j), ["kg"] ]);
+
+    push(@tb, @tmp);
+  }
+
+  push(@tb, (
+    [ ":dls" ],
     [ "\\Zloa", "Length overall", "Requirements", $loa, ["m"] ],
     [ "\\Zdls", "Displ, light ship", ":dls", $dls, ["kg"] ],
-    [ "tanks" ],
+    [ ":tanks" ],
     [ "\\Zqfw", "Capacity, F.W.", "Requirements", $qfw, ["gal"] ],
     [ "\\Zqgw", "Capacity, G.W.", ":qgw", $qgw, ["gal"] ],
     [ "\$q\$", "Black water rate", "Approx", $rbw, ["\$\\frac{\\text{gal}}{\\text{pax} \\cdot \\text{day}}\$"] ],
     [ "\\Znpax", "Number of people", "Requirements", $npax, ["pax"] ],
     [ "\\Zndays", "Number of days", "Requirements", $ndays, ["day"] ],
     [ "\\Zqbw", "Capacity, B.W.", ":qbw", $qbw, ["gal"] ],
-    [ "dtr" ],
+    [ ":dtr" ],
     [ "\\Zwtr", "Added weight", "Table 1", $wtr, ["kg"] ],
     [ "\\Zdtr", "Displ, trials", ":dtr", $dtr, ["kg"] ],
-    [ "hp" ],
+    [ ":hp" ],
     [ "k", "Constant", ":barnaby", $k, [""] ],
     [ "\\Zvmax", "Speed, trials", "Requirements", $vs_max, ["kt"] ],
-    [ "\\Zshp", "Shaft forsepower", ":shp", $shp, ["hp"] ],
-    [ "\\Zbhp", "Brake forsepower", ":bhp", $bhp, ["hp"] ],
-    [ "qfo" ],
+    [ "\\Zshp", "Shaft horsepower", ":shp", $shp, ["hp"] ],
+    [ "\\Zbhp", "Brake horsepower", ":bhp", $bhp, ["hp"] ],
+    [ ":qfo" ],
     [ "\\Zwc", "Added weight", "Table 2", $wc, ["kg"] ],
     [ "\\Zdh", "Displ, ".$dcname." (no fuel)", ":dh", $dh, ["kg"] ],
     [ "\\Zqun", "Fuel (unusable)", "Approx", $qun, ["gal"] ],
     [ "\\Zxres", "Fuel reserve factor", "Requirements", $xres, [""] ],
-    [ "\$c\$", "Fuel consumption rate", "Approx", $c, ["\$\\frac{\\text{gal}}{\\text{hp} \\cdot \\text{hr}}\$"] ],
+    [ "\$c\$", "Fuel consumption rate", "Approx", $c, 
+      ["\$\\frac{\\text{gal}}{\\text{hp} \\cdot \\text{hr}}\$"] ],
     [ "\$R\$", "Range", "Requirement", $R, ["nm"] ],
     [ "\\Zvcru", "Speed, cruising", "Requirement", $vs_cru, ["kt"] ],
     [ "\\Zqzero", "Fuel capacity (usable)", ":q02", $q0, ["gal"] ],
-    [ "\\Zqfo", "Fuel capacity (usable)", ":qfo", $qfo, ["gal"] ],
-  );
+    [ "\\Zqfo", "Fuel capacity (tank)", ":qfo", $qfo, ["gal"] ],
+    [ "\\Zdc", "Displacement, $dcname", ":dc2", $dc, ["kg"] ],
+    [ ":df" ],
+    [ "\\Zwf", "Added weight", "Table 3", $wf, ["kg"] ],
+    [ "\\Zdf", "Displacement, full-load", ":df", $df, ["kg"] ],
+    [ ":ap" ],
+    [ "\\Zap", "Projected chine area", ":ap", $ap, ["m\$^2\$"] ],
+    [ ":lcg" ],
+    [ "\\Zlcg", "Long'l center of gravity", "Blount parametrics", $lcg, ["m"] ],
+    [ ":cap" ],
+    [ "\\Zlp", "Chine length", ":cap", $lp, ["m"] ],
+    [ "\\Zcap", "Long'l center of \\Zap", ":cap", $cap, ["m"] ],
+  ));
 
   undef;
 --@]
 
-\begin{table}[h] \label{tab:prelim:calcs}
 \begin{center}
-  \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}} | p{.75cm} p{4.5cm} p{2.5cm} r p{1cm} | }
+  \begin{longtable}{| p{.75cm} p{4.5cm} p{2.5cm} r p{1cm} | }
+    \caption[Preliminary design calculations]{Preliminary design calculations} \label{tab:prelim:calcs} \\
+    \hline 
+    \multicolumn{1}{|l}{\textbf{Sym.}} & 
+        \multicolumn{1}{l}{\textbf{Description}} & 
+        \multicolumn{1}{l}{\textbf{From}} & 
+        \multicolumn{1}{r}{\textbf{Value}} & 
+        \multicolumn{1}{l|}{\textbf{Unit}} \\
     \hline
-    Sym. & Description & From & Value & Unit \\
+    \endfirsthead
+
+    \multicolumn{5}{c}%
+    {{\bfseries \tablename\ \thetable{} -- continued from previous page}} \\
+    \hline
+    \multicolumn{1}{|l}{\textbf{Sym.}} & 
+        \multicolumn{1}{l}{\textbf{Description}} & 
+        \multicolumn{1}{l}{\textbf{From}} & 
+        \multicolumn{1}{r}{\textbf{Value}} & 
+        \multicolumn{1}{l|}{\textbf{Unit}} \\
+    \hline
+    \endhead
+
+    \hline
+    \multicolumn{5}{|r|}{{Continued on next page}} \\
+    \hline
+    \endfoot
+
+    \hline
+    \hline
+    \endlastfoot
 
 [@--
   $i = "";
   foreach (@tb) {
     @_ = @{$_};
     if ($#{_} == 0) {
-      $i .= "\\hline\n";
       $i .= " & & & & \\\\\n";
-      $i .= "\\multicolumn{5}{| l |}{\\bfseries{\\ref{sec:prelim:".$_[0]."} \\nameref{sec:prelim:".$_[0]."}}} \\\\\n";
+      $i .= "\\multicolumn{5}{| l |}{\\bfseries{".($_[0] =~ /^:/ ? "\\ref{sec:prelim".$_[0]."} \\nameref{sec:prelim".$_[0]."}" : $_[0])."}} \\\\\n";
       $i .= "\\hline\n";
     } else {
       my $j = ($_[2] =~ /^:/ ? "Equation \\eqref{eq".$_[2]."}" : $_[2]);
@@ -461,10 +495,7 @@ That is to say:
   $i;
 --@]
 
-    \hline
-  \end{tabular*}
+  \end{longtable}
 \end{center}
-\caption{Preliminary design calculations}
-\end{table}
 
 \clearpage

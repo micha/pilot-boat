@@ -112,6 +112,7 @@ use Math::Units qw(convert);
     $t->{load} = {
       trials => {
         name  => "trials",
+        symb  => "\\Zwtr",
         pax   => 2,   # ppl
         fo    => 0,   # %
         fw    => 0,   # %
@@ -123,7 +124,8 @@ use Math::Units qw(convert);
       },
       range => {
         name  => "\\sfrac{3}{4} load",
-        pax   => 4,   # ppl
+        symb  => "\\Zwc",
+        pax   => 3,   # ppl
         fo    => 1,   # %
         fw    => .75, # %
         bw    => .25, # %
@@ -136,6 +138,7 @@ use Math::Units qw(convert);
       },
       full => {
         name  => "full-load",
+        symb  => "\\Zwf",
         pax   => 4,   # ppl
         fo    => 1,   # %
         fw    => 1,   # %

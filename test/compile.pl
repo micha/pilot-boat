@@ -45,7 +45,8 @@ sub do_tmpl() {
     DELIMITERS  =>  ['[@--', '--@]']
   );
 
-  $t->fill_in;
+  $t->fill_in 
+    or die &err("can't fill '".$_[0]."': ".$Text::Template::ERROR);
 }
 
 sub slurp() {
@@ -73,6 +74,7 @@ foreach (@d) {
 }
 
 #$sections = join("\n", map { &do_tmpl($_) } @d);
+#&do_tmpl("index.tmpl");
 print &do_tmpl("index.tmpl");
 
 __END__
